@@ -18,6 +18,7 @@ public class FormLoaderBehavier : MonoBehaviour {
     IWindowSwitchCtrl windowswitch;
     DataReceiver receiver;
     DataSender childSender;
+    Thread sendThread;
 
     Queue<KeyValuePair<string, string>> sendQueue = new Queue<KeyValuePair<string, string>>();
     Dictionary<ProtocalType, Action<string>> unityWait = new Dictionary<ProtocalType, Action<string>>();
@@ -27,15 +28,21 @@ public class FormLoaderBehavier : MonoBehaviour {
         receiver = new MessageTrans.DataReceiver();
         receiver.RegistHook();
         childSender = new MessageTrans.DataSender();
+        sendThread = new Thread(SendThread);
     }
 
-    private void Update()
+    private void SendThread()
     {
-        if (sendQueue.Count > 0 && windowswitch.Child != IntPtr.Zero)
+        while (true)
         {
-            KeyValuePair<string, string> data = sendQueue.Dequeue();
-            childSender.SendMessage(data.Key, data.Value);
+            Thread.Sleep(100);
+            if (sendQueue.Count > 0 && windowswitch.Child != IntPtr.Zero)
+            {
+                KeyValuePair<string, string> data = sendQueue.Dequeue();
+                childSender.SendMessage(data.Key, data.Value);
+            }
         }
+        
     }
 
     public void TryOpenHelpExe(string exePath)
@@ -58,6 +65,7 @@ public class FormLoaderBehavier : MonoBehaviour {
         {
             Debug.LogError("exe not fond");
         }
+        sendThread.Start();
     }
 
     private void OnExeHelpExt(object sender, EventArgs e)
@@ -122,5 +130,6 @@ public class FormLoaderBehavier : MonoBehaviour {
         receiver.RemoveHook();
         windowswitch.CloseChildWindow();
         windowswitch.OnCloseThisWindow();
+        sendThread.Abort();
     }
 }

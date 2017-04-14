@@ -59,6 +59,7 @@ namespace FormLoader
         private void RegistEntry()
         {
             exeHelp = new ExecuteHelp(dataSender,writeData);
+            Win32API.SendMessage(swi.Current, Win32API.WM_ACTIVATE, Win32API.WA_ACTIVE, IntPtr.Zero);
             dataReceiver.RegisterEvent(ProtocalType.dllfunction.ToString(), exeHelp.InvokeMethodByProtocal);
         }
 
