@@ -9,7 +9,9 @@ namespace Protocal
     /// </summary>
     public enum ProtocalType
     {
-        dllfunction
+        dllfunction,
+        lunchholder,
+        communicate
     }
 
 }

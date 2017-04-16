@@ -98,7 +98,7 @@ public class FormLoaderBehavier : MonoBehaviour {
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e);
+                    Debug.Log(item.Key +"[err]" + e);
                 }
             }
             
@@ -107,10 +107,13 @@ public class FormLoaderBehavier : MonoBehaviour {
     }
 #endif
 
-    public void AddSendQueue(ProtocalType type,string value,Action<string> onReceive)
+    public void AddSendQueue(ProtocalType type,string value)
     {
         sendQueue.Enqueue(new KeyValuePair<string, string>(type.ToString(), value));
-        receiver.RegisterEvent(type.ToString(), onReceive);
+    }
+    public void RegisteReceive(ProtocalType type, Action<string> onReceive)
+    {
+        if (onReceive != null) receiver.RegisterEvent(type.ToString(), onReceive);
 #if UNITY_EDITOR
         waitDic[type] = onReceive;
 #endif

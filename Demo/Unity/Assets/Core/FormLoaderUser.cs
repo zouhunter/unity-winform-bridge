@@ -2,6 +2,8 @@
 using Protocal;
 using Newtonsoft.Json;
 using System;
+using System.Reflection;
+using MessageTrans.Interal;
 public partial class FormLoaderUser
 {
     public enum FileType{
@@ -52,7 +54,9 @@ public partial class FormLoaderUser {
         object[] aregument = new object[] { title, filter, initialDirectory };
         DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
         string text = JsonConvert.SerializeObject(pro);
-        Behaiver.AddSendQueue(ProtocalType.dllfunction, text, onReceive);
+        Behaiver.AddSendQueue(ProtocalType.dllfunction, text);
+        Behaiver.RegisteReceive(ProtocalType.dllfunction, onReceive);
+
         //Test(text);
     }
     public static void SaveFileDialog(string title, FileType fileType, string initialDirectory, Action<string> onReceive)
@@ -72,10 +76,10 @@ public partial class FormLoaderUser {
         object[] aregument = new object[] { title, filter, initialDirectory };
         DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
         string text = JsonConvert.SerializeObject(pro);
-        Behaiver.AddSendQueue(ProtocalType.dllfunction, text, onReceive);
+        Behaiver.AddSendQueue(ProtocalType.dllfunction, text);
+        Behaiver.RegisteReceive(ProtocalType.dllfunction, onReceive);
         //Test(text);
     }
-
     public static void ColorDialog(Color color, Action<Color> onReceive)
     {
         string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/FileDialogHelp/FileDialogHelp/bin/Debug/FileDialogHelp.dll";
@@ -97,10 +101,71 @@ public partial class FormLoaderUser {
                 Debug.LogWarning(x);
             }
         };
-        Behaiver.AddSendQueue(ProtocalType.dllfunction, text, action);
+        Behaiver.AddSendQueue(ProtocalType.dllfunction, text);
+        Behaiver.RegisteReceive(ProtocalType.dllfunction, action);
         //Test(text);
     }
+    public static void LunchCubeCtrl(Action<string> onLunched)
+    {
+        string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/CubeMove/CubeMove/bin/Debug/CubeMove.dll";
+        string clsname = "CubeMove.Program";
+        string methodname = "Main";
+        HolderLunchFunc pro = new HolderLunchFunc("CubeMove", "RegisterHolder", path, clsname, methodname, null);
+        string text = JsonConvert.SerializeObject(pro);
+        Behaiver.AddSendQueue(ProtocalType.lunchholder, text);
+        Behaiver.RegisteReceive(ProtocalType.lunchholder,onLunched);
+        //LunchCommnuicateHolderTest(text);
+    }
+    public static void CommuateInfo(string methodName,object[] argument)
+    {
+        Protocal.ChartData data = new Protocal.ChartData();
+        data.arguments = argument;
+        data.methodName = methodName;
+        data.holderName = "CubeMove";
+        string text = JsonConvert.SerializeObject(data);
+        Behaiver.AddSendQueue(ProtocalType.communicate, text);
+    }
+    public static void ReigsterCube(Cube cube)
+    {
+        try
+        {
+            Behaiver.RegisteReceive(ProtocalType.communicate, (txt) =>
+            {
+                Debug.Log(txt);
+                JSONNode node = JSONNode.Parse(txt);
+                string methodName = node.AsObject["methodName"].Value;
+                var method = cube.GetType().GetMethod(methodName);
+                method.Invoke(cube, null);
+            });
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+        
+    }
 
+    static void LunchCommnuicateHolderTest(string x)
+    {
+        try
+        {
+            HolderLunchFunc protocal = JsonConvert.DeserializeObject<HolderLunchFunc>(x);
+            Assembly asb = Assembly.LoadFrom(protocal.dllData.dllpath);
+            var cls = asb.GetType(protocal.dllData.classname);
+            var method = cls.GetMethod(protocal.dllData.methodname);
+            var instence = Activator.CreateInstance(cls);
+            string back = (string)method.Invoke(instence, protocal.dllData.argument);
+           
+            var registerMethod = cls.GetMethod(protocal.holderRegistFunc);
+            //method.Invoke(instence, new object[] { new Action<string>() });
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            //MessageBox.Show(e.Message);
+        }
+
+    }
     static void Test(string x)
     {
         DllFuction protocal = JsonConvert.DeserializeObject<DllFuction>(x);
@@ -111,5 +176,4 @@ public partial class FormLoaderUser {
         string back = (string)method.Invoke(instence, protocal.argument);
         Debug.Log(back);
     }
-
 }

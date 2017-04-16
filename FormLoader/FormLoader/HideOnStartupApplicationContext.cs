@@ -60,10 +60,12 @@ namespace FormLoader
         {
             exeHelp = new ExecuteHelp(dataSender,writeData);
             Win32API.SendMessage(swi.Current, Win32API.WM_ACTIVATE, Win32API.WA_ACTIVE, IntPtr.Zero);
-            dataReceiver.RegisterEvent(ProtocalType.dllfunction.ToString(), exeHelp.InvokeMethodByProtocal);
+            dataReceiver.RegisterEvent(ProtocalType.dllfunction.ToString(), exeHelp.InvokeSimpleMethodByProtocal);
+            dataReceiver.RegisterEvent(ProtocalType.lunchholder.ToString(), exeHelp.LunchCommnuicateHolder);
+            dataReceiver.RegisterEvent(ProtocalType.communicate.ToString(), exeHelp.RegisterCommuateModle);
         }
 
-      
+
 
         protected override void OnMainFormClosed(object sender, EventArgs e)
         {
