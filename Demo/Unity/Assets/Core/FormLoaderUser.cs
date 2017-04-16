@@ -55,6 +55,51 @@ public partial class FormLoaderUser {
         Behaiver.AddSendQueue(ProtocalType.dllfunction, text, onReceive);
         //Test(text);
     }
+    public static void SaveFileDialog(string title, FileType fileType, string initialDirectory, Action<string> onReceive)
+    {
+        string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/FileDialogHelp/FileDialogHelp/bin/Debug/FileDialogHelp.dll";
+        string clsname = "FileDialogHelp.FileDialog";
+        string methodname = "SaveFileDialog";
+        string filter = "";
+        switch (fileType)
+        {
+            case FileType.Txt:
+                filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                break;
+            default:
+                break;
+        }
+        object[] aregument = new object[] { title, filter, initialDirectory };
+        DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
+        string text = JsonConvert.SerializeObject(pro);
+        Behaiver.AddSendQueue(ProtocalType.dllfunction, text, onReceive);
+        //Test(text);
+    }
+
+    public static void ColorDialog(Color color, Action<Color> onReceive)
+    {
+        string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/FileDialogHelp/FileDialogHelp/bin/Debug/FileDialogHelp.dll";
+        string clsname = "FileDialogHelp.FileDialog";
+        string methodname = "ColorDialog";
+        string col = "#" + ColorUtility.ToHtmlStringRGBA(color);
+        object[] aregument = new object[] { col };
+        DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
+        string text = JsonConvert.SerializeObject(pro);
+        Action<string> action = (x) =>
+        {
+            Color receiveColor;
+            if (ColorUtility.TryParseHtmlString(x,out receiveColor))
+            {
+                onReceive(receiveColor);
+            }
+            else
+            {
+                Debug.LogWarning(x);
+            }
+        };
+        Behaiver.AddSendQueue(ProtocalType.dllfunction, text, action);
+        //Test(text);
+    }
 
     static void Test(string x)
     {

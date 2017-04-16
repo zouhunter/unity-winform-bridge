@@ -21,8 +21,6 @@ namespace FormLoader
         }
         public void InvokeMethodByProtocal(string x)
         {
-            MessageBox.Show(x);
-
             try
             {
                 DllFuction protocal = JsonConvert.DeserializeObject<DllFuction>(x);

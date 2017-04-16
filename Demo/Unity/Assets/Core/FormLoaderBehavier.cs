@@ -21,7 +21,7 @@ public class FormLoaderBehavier : MonoBehaviour {
     Thread sendThread;
 
     Queue<KeyValuePair<string, string>> sendQueue = new Queue<KeyValuePair<string, string>>();
-    Dictionary<ProtocalType, Action<string>> unityWait = new Dictionary<ProtocalType, Action<string>>();
+    Dictionary<ProtocalType, Action<string>> waitDic = new Dictionary<ProtocalType, Action<string>>();
 
     private void Awake()
     {
@@ -84,7 +84,7 @@ public class FormLoaderBehavier : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds(1);
-            foreach (var item in unityWait)
+            foreach (var item in waitDic)
             {
                 try
                 {
@@ -112,12 +112,9 @@ public class FormLoaderBehavier : MonoBehaviour {
         sendQueue.Enqueue(new KeyValuePair<string, string>(type.ToString(), value));
         receiver.RegisterEvent(type.ToString(), onReceive);
 #if UNITY_EDITOR
-        if (!unityWait.ContainsKey(type)){
-            unityWait.Add(type,onReceive);
-        }
+        waitDic[type] = onReceive;
 #endif
     }
-
     private void OnDestroy()
     {
         receiver.RemoveHook();
