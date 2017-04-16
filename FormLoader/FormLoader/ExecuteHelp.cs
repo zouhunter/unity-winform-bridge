@@ -28,7 +28,7 @@ namespace FormLoader
                 var cls = asb.GetType(protocal.classname);
                 var method = cls.GetMethod(protocal.methodname);
                 var instence = Activator.CreateInstance(cls);
-                string back = (string)method.Invoke(instence, new object[] { protocal.argument });
+                string back = (string)method.Invoke(instence, protocal.argument);
                 dataSender.SendMessage(ProtocalType.dllfunction.ToString(), back);
                 //由于在unityedior模式下不支持信息传回所以用读写的方式
                 if (writeData)

@@ -12,7 +12,7 @@ public class Demo : MonoBehaviour {
     {
         if (GUILayout.Button("打开文件选择窗口"))
         {
-            FormLoaderUser.OpenFileDialog("txt", (x) =>
+            FormLoaderUser.OpenFileDialog("tet",FormLoaderUser.FileType.Txt,"C://", (x) =>
             {
                 Debug.Log(x);
             });
