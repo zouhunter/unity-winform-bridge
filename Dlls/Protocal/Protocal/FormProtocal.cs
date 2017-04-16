@@ -11,8 +11,8 @@ namespace Protocal
         public string dllpath;
         public string classname;
         public string methodname;
-        public object argument;
-        public DllFuction(string dllpath,string classname,string methodname, object argument)
+        public object[] argument;
+        public DllFuction(string dllpath,string classname,string methodname, object[] argument)
         {
             this.dllpath = dllpath;
             this.classname = classname;

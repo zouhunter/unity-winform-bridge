@@ -67,12 +67,6 @@ public class FormLoaderBehavier : MonoBehaviour {
         }
         sendThread.Start();
     }
-
-    private void OnExeHelpExt(object sender, EventArgs e)
-    {
-        Destroy(gameObject);
-    }
-
     private IEnumerator DelyRegisterSender()
     {
         while (windowswitch.Child == IntPtr.Zero){
@@ -118,7 +112,6 @@ public class FormLoaderBehavier : MonoBehaviour {
         sendQueue.Enqueue(new KeyValuePair<string, string>(type.ToString(), value));
         receiver.RegisterEvent(type.ToString(), onReceive);
 #if UNITY_EDITOR
-        Debug.Log(type.ToString());
         if (!unityWait.ContainsKey(type)){
             unityWait.Add(type,onReceive);
         }
