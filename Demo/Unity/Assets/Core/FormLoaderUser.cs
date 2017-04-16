@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 using System;
 using System.Reflection;
 using MessageTrans.Interal;
+using System.Text;
+using System.Collections.Generic;
+
 public partial class FormLoaderUser
 {
     public enum FileType{
@@ -39,6 +42,7 @@ public partial class FormLoaderUser {
     }
     public static void OpenFileDialog(string title, FileType fileType,string initialDirectory, Action<string> onReceive)
     {
+        List<byte> byts = new List<byte> (Encoding.UTF8.GetBytes(title));
         string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/FileDialogHelp/FileDialogHelp/bin/Debug/FileDialogHelp.dll";
         string clsname = "FileDialogHelp.FileDialog";
         string methodname = "OpenFileDialog";
@@ -51,16 +55,17 @@ public partial class FormLoaderUser {
             default:
                 break;
         }
-        object[] aregument = new object[] { title, filter, initialDirectory };
+        object[] aregument = new object[] { byts, filter, initialDirectory };
         DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
         string text = JsonConvert.SerializeObject(pro);
         Behaiver.AddSendQueue(ProtocalType.dllfunction, text);
         Behaiver.RegisteReceive(ProtocalType.dllfunction, onReceive);
-
         //Test(text);
     }
     public static void SaveFileDialog(string title, FileType fileType, string initialDirectory, Action<string> onReceive)
     {
+        List<byte> byts = new List<byte>(Encoding.UTF8.GetBytes(title));
+
         string path = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Demo")) + "Demo/FileDialogHelp/FileDialogHelp/bin/Debug/FileDialogHelp.dll";
         string clsname = "FileDialogHelp.FileDialog";
         string methodname = "SaveFileDialog";
@@ -73,7 +78,7 @@ public partial class FormLoaderUser {
             default:
                 break;
         }
-        object[] aregument = new object[] { title, filter, initialDirectory };
+        object[] aregument = new object[] { byts, filter, initialDirectory };
         DllFuction pro = new DllFuction(path, clsname, methodname, aregument);
         string text = JsonConvert.SerializeObject(pro);
         Behaiver.AddSendQueue(ProtocalType.dllfunction, text);

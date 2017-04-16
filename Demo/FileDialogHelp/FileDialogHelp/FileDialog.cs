@@ -7,12 +7,26 @@ using System.Windows;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
+using SimpleJSON;
 namespace FileDialogHelp
 {
     public class FileDialog
     {
-        public string OpenFileDialog(string title, string filter, string initialDirectory)
+        private string ConverByte(object titlebytes)
         {
+            JSONArray array = JSONArray.Parse(titlebytes.ToString()).AsArray;
+            byte[] byts = new byte[array.Count];
+            for (int i = 0; i < byts.Length; i++)
+            {
+                byts[i] = (byte)array[i].AsInt;
+            }
+            string title = System.Text.Encoding.UTF8.GetString(byts);
+            return title;
+        }
+        public string OpenFileDialog(object titlebytes, string filter, string initialDirectory)
+        {
+            string title = ConverByte(titlebytes);
+
             string resultFile = "";
             try
             {
@@ -37,8 +51,10 @@ namespace FileDialogHelp
             return resultFile;
 
         }
-        public string SaveFileDialog(string title, string filter, string initialDirectory)
+        public string SaveFileDialog(object titlebytes, string filter, string initialDirectory)
         {
+            string title = ConverByte(titlebytes);
+
             string resultFile = "";
             try
             {

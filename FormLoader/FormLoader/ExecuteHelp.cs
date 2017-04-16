@@ -14,14 +14,18 @@ namespace FormLoader
     {
         DataSender dataSender;
         bool writeData;
+        IntPtr currWin;
         Dictionary<string, object> holdDic = new Dictionary<string, object>();
-        public ExecuteHelp(DataSender dataSender, bool writeData)
+        public ExecuteHelp(IntPtr currWin,DataSender dataSender, bool writeData)
         {
             this.dataSender = dataSender;
             this.writeData = writeData;
+            this.currWin = currWin;
         }
         public void InvokeSimpleMethodByProtocal(string x)
         {
+            Win32API.SetWindowPos(currWin,-1,0,0,0,0, Win32API.SetWindowPosFlags.DoNotRedraw);
+
             try
             {
                 DllFuction protocal = JsonConvert.DeserializeObject<DllFuction>(x);
